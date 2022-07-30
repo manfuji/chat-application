@@ -19,7 +19,7 @@ const Home = () => {
     if (user) {
       const body = { email: user.email };
       axios
-        .post('/api/user', body)
+        .post('/api/chat/user', body)
         .then((res) => {
           console.log(res.data);
         })

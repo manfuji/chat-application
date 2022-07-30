@@ -18,9 +18,9 @@ const Navbar = () => {
     [currentChat, setCurrentChat] = useState({});
 
   useEffect(() => {
-    // if (window.closed) {
-    //   router.push('/api/auth/logout');
-    // }
+    if (window.closed) {
+      router.push('/api/auth/logout');
+    }
     const handleShadow = () => {
       if (window.scrollY >= 90) {
         setShadow(true);
@@ -30,27 +30,6 @@ const Navbar = () => {
     };
     window.addEventListener('scroll', handleShadow);
   }, []);
-
-  const getConversation = async () => {
-    try {
-      const res = await axios.get('/api/conversation/?id=' + user?.email);
-      setConversation(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getConversation();
-
-    const timer = window.setInterval(() => {
-      getConversation();
-    }, 10000);
-    return () => {
-      // Return callback to run on unmount.
-      window.clearInterval(timer);
-    };
-  }, [currentChat, user]);
 
   return (
     <div
@@ -87,51 +66,6 @@ const Navbar = () => {
         </div>
         <div className=" cursor-pointer shadow-sm hover:bg-gray-200 md:hidden">
           <MenuIcon className="h-8 w-8" onClick={() => setToggle(!toggle)} />
-        </div>
-      </div>
-
-      <div
-        className={`${
-          toggle
-            ? ' fixed left-0 top-0 h-screen w-full bg-black/70 md:hidden'
-            : ''
-        }`}
-      >
-        <div
-          className={`${
-            toggle
-              ? 'fixed left-0 top-0 h-screen w-[75%] justify-between bg-[#ecf0f3] p-10 transition-all duration-500 ease-in  sm:w-[65%] md:w-[45%]'
-              : 'hidden transition-all duration-500 ease-in'
-          }`}
-        >
-          <div className=" flex justify-between">
-            <Image
-              // layout="fill"
-              src="/favicon.ico"
-              alt=""
-              height="30"
-              width="100"
-              objectFit="contain"
-            />
-            <div
-              className="cursor-pointer rounded-full p-3 shadow-xl shadow-gray-400"
-              onClick={() => setToggle(!toggle)}
-            >
-              <XIcon className="inline-flex h-8 w-8 " />
-            </div>
-          </div>
-          <div className="my-4 border-b border-gray-300">
-            <p className="w-[85%] md:w-[90%] text-gray-50">People Online</p>
-          </div>
-          <div className="flex flex-col py-5">
-            <ul className=" flex flex-col items-center space-y-5 ">
-              {conversation.map((convo) => (
-                <div key={convo._id} className="cursor-pointer">
-                  <OnlineUser conversation={convo} email={user?.email} />
-                </div>
-              ))}
-            </ul>
-          </div>
         </div>
       </div>
     </div>

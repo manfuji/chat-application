@@ -1,7 +1,7 @@
-import db from '../../lib/db';
-import Message from '../../models/messageModel';
+import db from '../../../lib/db';
+import Message from '../../../models/messageModel';
 
-//create message
+//creating message for a user
 async function handler(req, res) {
   if (req.method === 'POST') {
     await db.connect();

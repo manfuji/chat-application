@@ -1,14 +1,16 @@
-import db from '../../lib/db';
-import conversation from '../../models/conversationModel';
+import db from '../../../lib/db';
+import conversation from '../../../models/conversationModel';
 
 //creating conversaton
 async function handler(req, res) {
   if (req.method === 'POST') {
     // making connection to database
     await db.connect();
+    // getting already existing users if there is any
     const getConversation = await conversation.find({
       members: { $all: [req.body.senderId, req.body.receiverId] },
     });
+    // if there isn't any create one and return it
     if (getConversation.length < 1) {
       const newConversation = new conversation({
         members: [req.body.senderId, req.body.receiverId],

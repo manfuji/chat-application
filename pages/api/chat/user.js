@@ -1,14 +1,15 @@
-import db from '../../lib/db';
-import User from '../../models/userModel';
+import db from '../../../lib/db';
+import User from '../../../models/userModel';
 
-//create User
+//saving user enail for later use
 async function handler(req, res) {
   if (req.method === 'POST') {
     await db.connect();
-    console.log(req.body.email);
+    // fetching email to check of it already exist
     const findUser = await User.find({
       email: req.body.email,
     });
+    // if not save one and return it
     if (findUser.length < 1) {
       const newUser = new User(req.body);
       try {

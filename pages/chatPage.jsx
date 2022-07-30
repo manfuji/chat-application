@@ -1,5 +1,3 @@
-import Head from 'next/head';
-import Image from 'next/image';
 import { useUser } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -20,7 +18,17 @@ const ChatApp = () => {
     [socketMessage, setSocketMessage] = useState(null),
     socket = useRef(),
     [onlineUsers, setOnlineUsers] = useState([]);
+  // [fetchConversation,setFetchConversation] = useState(false)
 
+  // protecting the route
+  useEffect(() => {
+    if (!user) {
+      // window.location.assign('/');
+      return router.push('/');
+    }
+  }, []);
+
+  // creating a connection with the socket server
   useEffect(() => {
     socket.current = io('https://fujisocket.herokuapp.com');
     socket.current.on('getMessage', (data) => {
@@ -32,6 +40,7 @@ const ChatApp = () => {
     });
   }, []);
 
+  // getting messages from the socket server
   useEffect(() => {
     socketMessage &&
       currentChat &&
@@ -39,6 +48,7 @@ const ChatApp = () => {
       setMessage((prev) => [...prev, socketMessage]);
   }, [socketMessage, currentChat]);
 
+  // getting all onine users
   useEffect(() => {
     socket.current.emit('addUser', user?.email);
     socket.current.on('getUsers', (users) => {
@@ -47,12 +57,14 @@ const ChatApp = () => {
     });
   }, [user]);
 
-  console.log(onlineUsers);
+  // console.log(onlineUsers);
 
+  // getting all conversation from the server(backend)
   const getConversation = async () => {
     try {
-      const res = await axios.get('/api/conversation/?id=' + user?.email);
+      const res = await axios.get('/api/chat/conversation/?id=' + user?.email);
       setConversation(res.data);
+      console.log('run again');
     } catch (error) {
       console.log(error);
     }
@@ -68,14 +80,14 @@ const ChatApp = () => {
       // Return callback to run on unmount.
       window.clearInterval(timer);
     };
-  }, [currentChat, user]);
-  // getting all user chats
+  }, [currentChat]);
 
-  console.log(currentChat);
+  // console.log(currentChat);
+  // fetting all message for a selected user
   useEffect(() => {
     const getMessage = async () => {
       try {
-        const res = await axios.get('/api/message/?id=' + currentChat._id);
+        const res = await axios.get('/api/chat/message/?id=' + currentChat._id);
         setMessage(res.data);
         console.log(res.data);
       } catch (error) {
@@ -85,7 +97,8 @@ const ChatApp = () => {
     getMessage();
   }, [currentChat?._id]);
 
-  console.log(sendMessage);
+  // console.log(sendMessage);
+  // creating new messages
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = {
@@ -93,10 +106,11 @@ const ChatApp = () => {
       senderId: user?.email,
       message: sendMessage,
     };
-
+    // extracting receiver id
     const receiverId = currentChat.members.find(
       (member) => member !== user.email
     );
+    // sending message to socket server
 
     socket.current.emit('sendMessage', {
       senderId: user.email,
@@ -104,8 +118,9 @@ const ChatApp = () => {
       text: sendMessage,
     });
 
+    // creating new message
     try {
-      const res = await axios.post('/api/message', body);
+      const res = await axios.post('/api/chat/message', body);
       setMessage([...message, res.data]);
       setSendMessage('');
       console.log(res);
@@ -130,8 +145,9 @@ const ChatApp = () => {
       senderId: user.email,
       receiverId: userId,
     };
+    // setFetchConversation(true)
     try {
-      const res = await axios.post('/api/conversation', body);
+      const res = await axios.post('/api/chat/conversation', body);
       // setConversation([...conversation, res.data]);
       setCurrentChat(res.data);
       // console.log(res);
@@ -142,6 +158,7 @@ const ChatApp = () => {
 
   return (
     <div className=" min-h-screen w-full bg-gray-200">
+      {/* navbar  */}
       <Navbar />
 
       <div className="bg-gray-200 flex flex-col md:flex-row justify-between md:h-screen md:pt-24">
@@ -185,9 +202,9 @@ const ChatApp = () => {
               ))}
             </ul>
           </div>
-          <div className="md:hidden mb-2">
+          <div className="md:hidden ">
             <Link href="/api/auth/logout">
-              <li className="font-medium text-red-600 tracking-widest bg-white px-3 py-2 rounded-xl text-center cursor-pointer">
+              <li className="text-red-600 tracking-widest text-sm  bg-white px-1.5 py-0.5 rounded-xl text-center cursor-pointer">
                 Logout
               </li>
             </Link>
@@ -195,10 +212,10 @@ const ChatApp = () => {
         </div>
         {/* right bar  */}
         {currentChat ? (
-          <div className="w-full md:w-[75%] flex flex-col justify-between h-[90%] px-4 ">
-            <div className="w-full flex flex-col justify-between overflow-y-scroll scrollbar-hide h-full">
-              <ul className="flex flex-row space-x-4 mb-2 ">
-                <li className="font-medium text-red-600 tracking-widest bg-white px-3 py-2 rounded-xl text-center cursor-pointer">
+          <div className="w-full md:w-[75%] flex flex-col justify-between h-[80vh] md:h-full md:mb-0 px-4 ">
+            <div className="w-full flex flex-col overflow-y-scroll scrollbar-hide h-full">
+              <ul className="flex flex-row space-x-4 my-1.5 ">
+                <li className=" text-red-600 tracking-widest text-sm bg-white px-1.5 py-1 rounded-xl text-center cursor-pointer">
                   Block
                 </li>
               </ul>
