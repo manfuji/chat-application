@@ -14,7 +14,7 @@ const ChatApp = () => {
   const router = useRouter();
   const { user, loading, error } = useUser(),
     [conversation, setConversation] = useState([]),
-    [currentChat, setCurrentChat] = useState({}),
+    [currentChat, setCurrentChat] = useState(null),
     [message, setMessage] = useState([]),
     [sendMessage, setSendMessage] = useState(''),
     [socketMessage, setSocketMessage] = useState(null),
@@ -22,7 +22,7 @@ const ChatApp = () => {
     [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
-    socket.current = io('ws://localhost:8900');
+    socket.current = io('https://fujisocket.herokuapp.com');
     socket.current.on('getMessage', (data) => {
       setSocketMessage({
         senderId: data.senderId,
@@ -83,7 +83,7 @@ const ChatApp = () => {
       }
     };
     getMessage();
-  }, [currentChat._id]);
+  }, [currentChat?._id]);
 
   console.log(sendMessage);
   const handleSubmit = async (e) => {
@@ -141,19 +141,19 @@ const ChatApp = () => {
   };
 
   return (
-    <>
+    <div className=" min-h-screen w-full bg-gray-200">
       <Navbar />
 
-      <div className="bg-gray-200 flex flex-row h-screen pt-24">
+      <div className="bg-gray-200 flex flex-col md:flex-row justify-between md:h-screen md:pt-24">
         {/* left side bar  */}
-        <div className="w-[25%] overflow-y-scroll px-3 scrollbar-hide md:flex flex-col justify-evenly hidden">
-          <div className="flex flex-col py-5 ">
-            <div className="my-4 border-b border-gray-300">
-              <p className="w-[85%] md:w-[90%] text-gray-700 text-center text-2xl font-bold tracking-widest">
+        <div className="md:w-[25%] w-full overflow-y-scroll px-3 scrollbar-hide sticky top-0 bg-gray-200 md:bg-transparent flex flex-col justify-md:evenly ">
+          <div className="flex md:flex-col flex-row py-5 ">
+            <div className="md:my-4 border-b border-gray-300">
+              <p className="w-[85%] md:w-[90%] text-gray-700 mr-3 md:mr-0 text-center text-lg md:text-2xl font-bold tracking-widest">
                 Chats
               </p>
             </div>
-            <ul className=" flex flex-col items-center space-y-5 ">
+            <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide">
               {conversation.map((convo) => (
                 <div
                   key={convo._id}
@@ -165,13 +165,13 @@ const ChatApp = () => {
               ))}
             </ul>
           </div>
-          <div className="flex flex-col py-5 ">
-            <div className="my-4 border-b border-gray-300">
-              <p className="w-[85%] md:w-[90%] text-gray-700 text-center text-2xl font-bold tracking-widest">
+          <div className="flex md:flex-col flex-row pb-3 ">
+            <div className="md:my-4 border-b border-gray-300">
+              <p className="w-full md:w-[90%] mr-3 md:mr-0 text-gray-700 text-center text-lg md:text-2xl font-bold tracking-widest">
                 Online Users
               </p>
             </div>
-            <ul className=" flex flex-col items-center space-y-5 ">
+            <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide ">
               {filteredOnlineUsers.map((onlineUser) => (
                 <div
                   key={onlineUser.socketId}
@@ -185,11 +185,23 @@ const ChatApp = () => {
               ))}
             </ul>
           </div>
+          <div className="md:hidden mb-2">
+            <Link href="/api/auth/logout">
+              <li className="font-medium text-red-600 tracking-widest bg-white px-3 py-2 rounded-xl text-center cursor-pointer">
+                Logout
+              </li>
+            </Link>
+          </div>
         </div>
         {/* right bar  */}
-        {currentChat !== {} ? (
-          <div className="w-full md:w-[75%] flex flex-col justify-between px-4 ">
-            <div className="w-full flex flex-col overflow-y-scroll scrollbar-hide h-full">
+        {currentChat ? (
+          <div className="w-full md:w-[75%] flex flex-col justify-between h-[90%] px-4 ">
+            <div className="w-full flex flex-col justify-between overflow-y-scroll scrollbar-hide h-full">
+              <ul className="flex flex-row space-x-4 mb-2 ">
+                <li className="font-medium text-red-600 tracking-widest bg-white px-3 py-2 rounded-xl text-center cursor-pointer">
+                  Block
+                </li>
+              </ul>
               {message.map((mess) => (
                 <div ref={scrollRef} key={mess.createdAt}>
                   <ChatCard
@@ -199,7 +211,7 @@ const ChatApp = () => {
                 </div>
               ))}
             </div>
-            <div className="max-w-7xl mx-auto pb-4 pt-5  ">
+            <div className="max-w-7xl mx-auto flex-1 pb-4 pt-5  ">
               <form className="flex md:flex-row md:space-x-4 flex-col items-center space-y-4">
                 <textarea
                   placeholder="Type message....."
@@ -219,12 +231,12 @@ const ChatApp = () => {
             </div>
           </div>
         ) : (
-          <div className="font-bold max-w-4xl mx-auto text-lg md:text-3xl text-gray-400 mt-[20%] ">
+          <div className="font-bold max-w-4xl mx-auto min-h-screen text-lg md:text-3xl text-gray-400 mt-[20%] ">
             Please Start A conversation
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

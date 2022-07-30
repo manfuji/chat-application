@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+@layer base {
+    body{
+
+        @apply bg-gray-200;
+    }
+  
+}
+html {
+    font-family: Proxima Nova, system-ui, sans-serif;
+  }
+
+html{
+    scroll-behavior: smooth;
+    font-family: 'Poppins', sans-serif;
+
+}
