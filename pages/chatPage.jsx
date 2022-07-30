@@ -158,104 +158,108 @@ const ChatApp = () => {
 
   return (
     <div className=" min-h-screen w-full bg-gray-200">
+      {user && (
+        <>
+          <Navbar />
+
+          <div className="bg-gray-200 flex flex-col md:flex-row justify-between md:h-screen md:pt-24">
+            {/* left side bar  */}
+            <div className="md:w-[25%] w-full overflow-y-scroll px-3 scrollbar-hide sticky top-0 bg-gray-200 md:bg-transparent flex flex-col justify-md:evenly ">
+              <div className="flex md:flex-col flex-row py-5 ">
+                <div className="md:my-4 border-b border-gray-300">
+                  <p className="w-[85%] md:w-[90%] text-gray-700 mr-3 md:mr-0 text-center text-lg md:text-2xl font-bold tracking-widest">
+                    Chats
+                  </p>
+                </div>
+                <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide">
+                  {conversation.map((convo) => (
+                    <div
+                      key={convo._id}
+                      onClick={() => setCurrentChat(convo)}
+                      className="cursor-pointer"
+                    >
+                      <OnlineUser conversation={convo} email={user?.email} />
+                    </div>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex md:flex-col flex-row pb-3 ">
+                <div className="md:my-4 border-b border-gray-300">
+                  <p className="w-full md:w-[90%] mr-3 md:mr-0 text-gray-700 text-center text-lg md:text-2xl font-bold tracking-widest">
+                    Online Users
+                  </p>
+                </div>
+                <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide ">
+                  {filteredOnlineUsers.map((onlineUser) => (
+                    <div
+                      key={onlineUser.socketId}
+                      onClick={() => handleNewConversation(onlineUser.userId)}
+                      className="cursor-pointer"
+                    >
+                      <LiveUsers email={onlineUser.userId} />
+
+                      {/* <OnlineUser conversation={onlineUser} email={user?.email} /> */}
+                    </div>
+                  ))}
+                </ul>
+              </div>
+              <div className="md:hidden ">
+                <Link href="/api/auth/logout">
+                  <li className="text-red-600 tracking-widest text-sm  bg-white px-1.5 py-0.5 rounded-xl text-center cursor-pointer">
+                    Logout
+                  </li>
+                </Link>
+              </div>
+            </div>
+            {/* right bar  */}
+            {currentChat ? (
+              <div className="w-full md:w-[75%] flex flex-col justify-between h-[80vh] md:h-full md:mb-0 px-4 ">
+                <div className="w-full flex flex-col overflow-y-scroll scrollbar-hide h-full">
+                  <ul className="flex flex-row space-x-4 my-1.5 ">
+                    <li className=" text-red-600 tracking-widest text-sm bg-white px-1.5 py-1 rounded-xl text-center cursor-pointer">
+                      Block
+                    </li>
+                  </ul>
+                  {message.map((mess) => (
+                    <div ref={scrollRef} key={mess.createdAt}>
+                      <ChatCard
+                        owner={mess.senderId === user.email}
+                        message={mess}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="max-w-7xl mx-auto flex-1 pb-4 pt-5  ">
+                  <form className="flex md:flex-row md:space-x-4 flex-col items-center space-y-4">
+                    <textarea
+                      required
+                      placeholder="Type message....."
+                      cols={70}
+                      rows={4}
+                      value={sendMessage}
+                      onChange={(e) => setSendMessage(e.target.value)}
+                      className="w-full mx-auto px-2 py-3 outline-none rounded-lg text-gray-700"
+                    />
+                    {sendMessage !== '' && (
+                      <button
+                        onClick={handleSubmit}
+                        className="lg:text-base text-sm md:h-12 h-8 tracking-widest pb-2 uppercase text-blue-700 shadow-lg shadow-gray-400 md:w-64 w-44 bg-slate-20 bg-slate-100 pt-2.5 mt-5 ring-1 rounded-xl px-4 ring-gray-200 text-center justify-center items-center"
+                      >
+                        Send message
+                      </button>
+                    )}
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <div className="font-bold max-w-4xl mx-auto min-h-screen text-lg md:text-3xl text-gray-400 mt-[20%] ">
+                Please Start A conversation
+              </div>
+            )}
+          </div>
+        </>
+      )}
       {/* navbar  */}
-      <Navbar />
-
-      <div className="bg-gray-200 flex flex-col md:flex-row justify-between md:h-screen md:pt-24">
-        {/* left side bar  */}
-        <div className="md:w-[25%] w-full overflow-y-scroll px-3 scrollbar-hide sticky top-0 bg-gray-200 md:bg-transparent flex flex-col justify-md:evenly ">
-          <div className="flex md:flex-col flex-row py-5 ">
-            <div className="md:my-4 border-b border-gray-300">
-              <p className="w-[85%] md:w-[90%] text-gray-700 mr-3 md:mr-0 text-center text-lg md:text-2xl font-bold tracking-widest">
-                Chats
-              </p>
-            </div>
-            <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide">
-              {conversation.map((convo) => (
-                <div
-                  key={convo._id}
-                  onClick={() => setCurrentChat(convo)}
-                  className="cursor-pointer"
-                >
-                  <OnlineUser conversation={convo} email={user?.email} />
-                </div>
-              ))}
-            </ul>
-          </div>
-          <div className="flex md:flex-col flex-row pb-3 ">
-            <div className="md:my-4 border-b border-gray-300">
-              <p className="w-full md:w-[90%] mr-3 md:mr-0 text-gray-700 text-center text-lg md:text-2xl font-bold tracking-widest">
-                Online Users
-              </p>
-            </div>
-            <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide ">
-              {filteredOnlineUsers.map((onlineUser) => (
-                <div
-                  key={onlineUser.socketId}
-                  onClick={() => handleNewConversation(onlineUser.userId)}
-                  className="cursor-pointer"
-                >
-                  <LiveUsers email={onlineUser.userId} />
-
-                  {/* <OnlineUser conversation={onlineUser} email={user?.email} /> */}
-                </div>
-              ))}
-            </ul>
-          </div>
-          <div className="md:hidden ">
-            <Link href="/api/auth/logout">
-              <li className="text-red-600 tracking-widest text-sm  bg-white px-1.5 py-0.5 rounded-xl text-center cursor-pointer">
-                Logout
-              </li>
-            </Link>
-          </div>
-        </div>
-        {/* right bar  */}
-        {currentChat ? (
-          <div className="w-full md:w-[75%] flex flex-col justify-between h-[80vh] md:h-full md:mb-0 px-4 ">
-            <div className="w-full flex flex-col overflow-y-scroll scrollbar-hide h-full">
-              <ul className="flex flex-row space-x-4 my-1.5 ">
-                <li className=" text-red-600 tracking-widest text-sm bg-white px-1.5 py-1 rounded-xl text-center cursor-pointer">
-                  Block
-                </li>
-              </ul>
-              {message.map((mess) => (
-                <div ref={scrollRef} key={mess.createdAt}>
-                  <ChatCard
-                    owner={mess.senderId === user.email}
-                    message={mess}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="max-w-7xl mx-auto flex-1 pb-4 pt-5  ">
-              <form className="flex md:flex-row md:space-x-4 flex-col items-center space-y-4">
-                <textarea
-                  required
-                  placeholder="Type message....."
-                  cols={70}
-                  rows={4}
-                  value={sendMessage}
-                  onChange={(e) => setSendMessage(e.target.value)}
-                  className="w-full mx-auto px-2 py-3 outline-none rounded-lg text-gray-700"
-                />
-                {sendMessage !== '' && (
-                  <button
-                    onClick={handleSubmit}
-                    className="lg:text-base text-sm md:h-12 h-8 tracking-widest pb-2 uppercase text-blue-700 shadow-lg shadow-gray-400 md:w-64 w-44 bg-slate-20 bg-slate-100 pt-2.5 mt-5 ring-1 rounded-xl px-4 ring-gray-200 text-center justify-center items-center"
-                  >
-                    Send message
-                  </button>
-                )}
-              </form>
-            </div>
-          </div>
-        ) : (
-          <div className="font-bold max-w-4xl mx-auto min-h-screen text-lg md:text-3xl text-gray-400 mt-[20%] ">
-            Please Start A conversation
-          </div>
-        )}
-      </div>
     </div>
   );
 };

@@ -39,15 +39,14 @@ const Navbar = () => {
           : 'fixed z-[100] h-20 w-full bg-white hidden md:inline-block'
       }
     >
-      <div className="flex h-full w-full items-center justify-between px-6 2xl:p-16">
-        <Image
-          // layout="fill"
-          src="/favicon.ico"
-          alt=""
-          height="50"
-          width="125"
-          objectFit="contain"
-        />
+      <div className="flex h-full w-full items-center text-center justify-between px-6 2xl:p-16">
+        {user && (
+          <Link href="/">
+            <li className="ml-10 font-semibold tracking-wider cursor-pointer text-sm uppercase hover:border-b">
+              {user?.email}
+            </li>
+          </Link>
+        )}
         <div>
           {user && (
             <ul className=" hidden md:flex ">
@@ -63,9 +62,6 @@ const Navbar = () => {
               </Link>
             </ul>
           )}
-        </div>
-        <div className=" cursor-pointer shadow-sm hover:bg-gray-200 md:hidden">
-          <MenuIcon className="h-8 w-8" onClick={() => setToggle(!toggle)} />
         </div>
       </div>
     </div>
