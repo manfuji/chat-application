@@ -151,14 +151,9 @@ const ChatApp = () => {
       // setConversation([...conversation, res.data]);
       setCurrentChat(res.data);
       // console.log(res);
-
-      try {
-        const res = await axios.get('/api/chat/message/?id=' + currentChat._id);
-        setMessage(res.data);
-        // console.log(res.data);
-      } catch (error) {
-        console.log(error);
-      }
+      const data = await axios.get('/api/chat/message/?id=' + currentChat._id);
+      setMessage(data.data);
+      // console.log(res.data);
     } catch (error) {
       console.log(error);
     }
