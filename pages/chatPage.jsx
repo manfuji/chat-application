@@ -17,8 +17,8 @@ const ChatApp = () => {
     [sendMessage, setSendMessage] = useState(''),
     [socketMessage, setSocketMessage] = useState(null),
     socket = useRef(),
-    [onlineUsers, setOnlineUsers] = useState([]);
-  // [fetchConversation,setFetchConversation] = useState(false)
+    [onlineUsers, setOnlineUsers] = useState([]),
+    [liveChatid, setLiveChatid] = useState('');
 
   // protecting the route
   useEffect(() => {
@@ -95,7 +95,7 @@ const ChatApp = () => {
       }
     };
     getMessage();
-  }, [currentChat]);
+  }, [currentChat, liveChatid]);
 
   // console.log(sendMessage);
   // creating new messages
@@ -141,6 +141,7 @@ const ChatApp = () => {
   );
 
   const handleNewConversation = async (userId) => {
+    setLiveChatid(userId);
     const body = {
       senderId: user.email,
       receiverId: userId,
@@ -151,9 +152,6 @@ const ChatApp = () => {
       // setConversation([...conversation, res.data]);
       setCurrentChat(res.data);
       // console.log(res);
-      const data = await axios.get('/api/chat/message/?id=' + currentChat._id);
-      setMessage(data.data);
-      // console.log(res.data);
     } catch (error) {
       console.log(error);
     }
