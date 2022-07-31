@@ -146,12 +146,9 @@ const ChatApp = () => {
       senderId: user.email,
       receiverId: userId,
     };
-    // setFetchConversation(true)
     try {
       const res = await axios.post('/api/chat/conversation', body);
-      // setConversation([...conversation, res.data]);
       setCurrentChat(res.data);
-      // console.log(res);
     } catch (error) {
       console.log(error);
     }

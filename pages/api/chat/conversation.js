@@ -7,7 +7,7 @@ async function handler(req, res) {
     // making connection to database
     await db.connect();
     // getting already existing users if there is any
-    const getConversation = await conversation.find({
+    const getConversation = await conversation.findOne({
       members: { $all: [req.body.senderId, req.body.receiverId] },
     });
     // if there isn't any create one and return it
