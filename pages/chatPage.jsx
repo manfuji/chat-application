@@ -17,20 +17,19 @@ const ChatApp = () => {
     [sendMessage, setSendMessage] = useState(''),
     [socketMessage, setSocketMessage] = useState(null),
     socket = useRef(),
-    [onlineUsers, setOnlineUsers] = useState([]),
-    [liveChatid, setLiveChatid] = useState('');
+    [onlineUsers, setOnlineUsers] = useState([]);
+  // [liveChatid, setLiveChatid] = useState('');
 
   // protecting the route
-  useEffect(() => {
-    if (!user) {
-      // window.location.assign('/');
-      return router.push('/');
-    }
-  }, []);
+  // useEffect(() => {
+
+  // }, []);
 
   // creating a connection with the socket server
   useEffect(() => {
     socket.current = io('https://fujisocket.herokuapp.com');
+    // socket.current = io('ws://localhost:8900');
+
     socket.current.on('getMessage', (data) => {
       setSocketMessage({
         senderId: data.senderId,
@@ -64,22 +63,18 @@ const ChatApp = () => {
     try {
       const res = await axios.get('/api/chat/conversation/?id=' + user?.email);
       setConversation(res.data);
-      console.log('run again');
+      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
+    if (!user) {
+      // window.location.assign('/');
+      return router.push('/');
+    }
     getConversation();
-
-    const timer = window.setInterval(() => {
-      getConversation();
-    }, 10000);
-    return () => {
-      // Return callback to run on unmount.
-      window.clearInterval(timer);
-    };
   }, [currentChat]);
 
   // console.log(currentChat);
@@ -95,7 +90,8 @@ const ChatApp = () => {
       }
     };
     getMessage();
-  }, [currentChat, liveChatid]);
+    getConversation();
+  }, [currentChat]);
 
   // console.log(sendMessage);
   // creating new messages
@@ -141,7 +137,7 @@ const ChatApp = () => {
   );
 
   const handleNewConversation = async (userId) => {
-    setLiveChatid(userId);
+    // setLiveChatid(userId);
     const body = {
       senderId: user.email,
       receiverId: userId,
@@ -149,6 +145,9 @@ const ChatApp = () => {
     try {
       const res = await axios.post('/api/chat/conversation', body);
       setCurrentChat(res.data);
+      const data = await axios.get('/api/chat/message/?id=' + currentChat._id);
+      setMessage(data.data);
+      console.log(data.data);
     } catch (error) {
       console.log(error);
     }
