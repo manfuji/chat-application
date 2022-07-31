@@ -95,7 +95,7 @@ const ChatApp = () => {
       }
     };
     getMessage();
-  }, [currentChat?._id]);
+  }, [currentChat]);
 
   // console.log(sendMessage);
   // creating new messages
@@ -123,7 +123,7 @@ const ChatApp = () => {
       const res = await axios.post('/api/chat/message', body);
       setMessage([...message, res.data]);
       setSendMessage('');
-      console.log(res);
+      // console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -151,6 +151,14 @@ const ChatApp = () => {
       // setConversation([...conversation, res.data]);
       setCurrentChat(res.data);
       // console.log(res);
+
+      try {
+        const res = await axios.get('/api/chat/message/?id=' + currentChat._id);
+        setMessage(res.data);
+        // console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -239,7 +247,7 @@ const ChatApp = () => {
                   onChange={(e) => setSendMessage(e.target.value)}
                   className="w-full mx-auto px-2 py-3 outline-none rounded-lg text-gray-700"
                 />
-                {sendMessage.length > 0 && (
+                {sendMessage.length > 0 && sendMessage !== ' ' && (
                   <button
                     onClick={handleSubmit}
                     className="lg:text-base text-sm md:h-12 h-8 tracking-widest pb-2 uppercase text-blue-700 shadow-lg shadow-gray-400 md:w-64 w-44 bg-slate-20 bg-slate-100 pt-2.5 mt-5 ring-1 rounded-xl px-4 ring-gray-200 text-center justify-center items-center"
