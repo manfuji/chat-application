@@ -1,0 +1,12 @@
+Chat endpoint ==>i hosted it on vercel because of performance issue with serverless function on heroku.
+	https://fujichat.vercel.app/	
+
+socket endpoint	
+	https://fujisocket.herokuapp.com	
+
+repo for chat app
+	https://github.com/manfuji/chat-application
+	
+repo for socket app	
+	https://github.com/manfuji/socketio
+	
