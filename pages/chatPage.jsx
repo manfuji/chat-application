@@ -145,6 +145,7 @@ const ChatApp = () => {
     try {
       const res = await axios.post('/api/chat/conversation', body);
       setCurrentChat(res.data);
+      console.log(res.data);
       const data = await axios.get('/api/chat/message/?id=' + currentChat._id);
       setMessage(data.data);
       console.log(data.data);
@@ -167,7 +168,7 @@ const ChatApp = () => {
                 Chats
               </p>
             </div>
-            <ul className=" flex md:flex-col flex-row overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide">
+            <ul className=" flex md:flex-col-reverse flex-row-reverse overflow-x-scroll space-x-2 md:overflow-hidden items-center md:space-y-5 scrollbar-hide">
               {conversation.map((convo) => (
                 <div
                   key={convo._id}
@@ -209,7 +210,7 @@ const ChatApp = () => {
         </div>
         {/* right bar  */}
         {currentChat ? (
-          <div className="w-full md:w-[75%] flex flex-col justify-between h-[80vh] md:h-full md:mb-0 px-4 ">
+          <div className="w-full md:w-[75%] flex flex-col justify-between h-[75vh] md:h-full md:mb-0 px-4 ">
             <div className="w-full flex flex-col overflow-y-scroll scrollbar-hide h-full">
               <ul className="flex flex-row space-x-4 my-1.5 ">
                 <li className=" text-red-600 tracking-widest text-sm bg-white px-1.5 py-1 rounded-xl text-center cursor-pointer">
@@ -248,7 +249,7 @@ const ChatApp = () => {
             </div>
           </div>
         ) : (
-          <div className="font-bold max-w-4xl mx-auto min-h-screen text-lg md:text-3xl text-gray-400 mt-[20%] ">
+          <div className="font-bold max-w-4xl mx-auto md:min-h-screen min-h-[70vh] text-lg md:text-3xl text-gray-400 mt-[20%] ">
             Please Start A conversation
           </div>
         )}

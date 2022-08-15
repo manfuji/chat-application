@@ -11,7 +11,7 @@ async function handler(req, res) {
       members: { $all: [req.body.senderId, req.body.receiverId] },
     });
     // if there isn't any create one and return it
-    if (getConversation.length < 1) {
+    if (!getConversation) {
       const newConversation = new conversation({
         members: [req.body.senderId, req.body.receiverId],
       });
